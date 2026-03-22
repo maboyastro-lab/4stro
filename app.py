@@ -51,7 +51,10 @@ def chat():
         )
         return jsonify({"reply": response.choices[0].message.content})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        err = str(e)
+        if '429' in err or 'rate_limit' in err.lower() or 'quota' in err.lower():
+            return jsonify({"reply": "🌌 Dame unos momentos para recargar las estrellas... Estoy recibiendo demasiadas consultas a la vez. ¡Intentá de nuevo en unos segundos! ⭐"})
+        return jsonify({"error": err}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
