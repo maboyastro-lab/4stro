@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 from groq import Groq
 import os
-import base64
 
 app = Flask(__name__, static_folder='.')
 
@@ -30,18 +29,9 @@ def chat():
     image_b64 = data.get('image')
     image_mime= data.get('mime', 'image/jpeg')
 
-    # Construir el ultimo mensaje (con imagen si viene)
-    if image_b64 and messages:
-        last = messages[-1]
-        messages = messages[:-1] + [{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": last["content"]},
-                {"type": "image_url", "image_url": {
-                    "url": f"data:{image_mime};base64,{image_b64}"
-                }}
-            ]
-        }]
+    # Si viene imagen, responder que no está disponible por ahora
+    if image_b64:
+        return jsonify({"reply": "🔭 ¡Ups! La visión de imágenes está en mantenimiento por ahora. Pero puedes describirme lo que ves y te ayudo igual 🚀"})
 
     full_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
 
