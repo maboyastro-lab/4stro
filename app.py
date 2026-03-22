@@ -35,6 +35,11 @@ def chat():
     if image_b64:
         return jsonify({"reply": "🔭 ¡Ups! La visión de imágenes está en mantenimiento por ahora. Pero puedes describirme lo que ves y te ayudo igual 🚀"})
 
+    # Comando oculto
+    last_msg = messages[-1]['content'].strip().lower() if messages else ''
+    if 'six seven' in last_msg:
+        return jsonify({"reply": "Mi loco, dele pa fuera. 🚪"})
+
     full_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
 
     try:
