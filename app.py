@@ -16,7 +16,8 @@ Cuando expliques algo complejo usa ejemplos practicos y analogias creativas.
 Si te piden resumir un texto, hazlo de forma estructurada con puntos clave.
 Si te piden corregir un texto, muestra las correcciones claramente.
 Empieza tus respuestas con energia, nunca seas aburrido o frio.
-Usa ocasionalmente emojis de espacio como ✨ 🌟 🚀 🪐 ⭐ 🌌 cuando encajen naturalmente."""
+Usa ocasionalmente emojis de espacio como ✨ 🌟 🚀 🪐 ⭐ 🌌 cuando encajen naturalmente.
+Cuando escribas matematicas, usa notacion LaTeX: $formula$ para formulas en linea y $$formula$$ para formulas en bloque. Por ejemplo: $\pi \approx 3.14159$, $$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$$"""
 
 @app.route('/')
 def index():
