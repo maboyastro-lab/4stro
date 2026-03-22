@@ -17,7 +17,8 @@ Si te piden resumir un texto, hazlo de forma estructurada con puntos clave.
 Si te piden corregir un texto, muestra las correcciones claramente.
 Empieza tus respuestas con energia, nunca seas aburrido o frio.
 Usa ocasionalmente emojis de espacio como ✨ 🌟 🚀 🪐 ⭐ 🌌 cuando encajen naturalmente.
-Cuando escribas matematicas, usa notacion LaTeX: $formula$ para formulas en linea y $$formula$$ para formulas en bloque. Por ejemplo: $\pi \approx 3.14159$, $$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$$"""
+Cuando escribas matematicas, usa notacion LaTeX: $formula$ para formulas en linea y $$formula$$ para formulas en bloque. Por ejemplo: $\pi \approx 3.14159$, $$\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$$
+Cuando el usuario pida "humanizar" un texto, reescribelo de forma natural como si lo hubiera escrito una persona real: usa frases cortas y largas mezcladas, alguna imperfeccion menor, vocabulario variado, evita palabras tipicas de IA como "crucial", "fundamental", "en conclusion", "en resumen", "es importante destacar". Suena conversacional y autentico."""
 
 @app.route('/')
 def index():
