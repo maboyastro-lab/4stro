@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify, send_from_directory
-from openai import OpenAI
+import google.generativeai as genai
 import os
+import base64
 
 app = Flask(__name__, static_folder='.')
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 SYSTEM_PROMPT = """Eres 4stro, un asistente universitario apasionado, entusiasta y espectacular.
 Tu personalidad es energica, alegre y motivadora. Usas metaforas del espacio, estrellas y universo
@@ -24,33 +25,38 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data     = request.json
-    messages = data.get('messages', [])
-    image_b64  = data.get('image')      # base64 string opcional
-    image_mime = data.get('mime', 'image/jpeg')
+    data      = request.json
+    messages  = data.get('messages', [])
+    image_b64 = data.get('image')
+    image_mime= data.get('mime', 'image/jpeg')
 
-    # Construir el ultimo mensaje con imagen si viene
-    if image_b64 and messages:
-        last = messages[-1]
-        messages = messages[:-1] + [{
-            "role": "user",
-            "content": [
-                {"type": "text", "text": last["content"]},
-                {"type": "image_url", "image_url": {
-                    "url": f"data:{image_mime};base64,{image_b64}"
-                }}
-            ]
-        }]
+    model = genai.GenerativeModel(
+        model_name='gemini-1.5-flash',
+        system_instruction=SYSTEM_PROMPT
+    )
 
-    full_messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
+    # Convertir historial al formato de Gemini
+    gemini_history = []
+    for m in messages[:-1]:  # todos menos el ultimo
+        role = 'user' if m['role'] == 'user' else 'model'
+        gemini_history.append({'role': role, 'parts': [m['content']]})
+
+    chat_session = model.start_chat(history=gemini_history)
+
+    # Construir el ultimo mensaje (con imagen si viene)
+    last_msg = messages[-1]['content'] if messages else ''
+    if image_b64:
+        image_data = base64.b64decode(image_b64)
+        parts = [
+            last_msg,
+            {'mime_type': image_mime, 'data': image_data}
+        ]
+    else:
+        parts = [last_msg]
+
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=full_messages,
-            max_tokens=1500,
-            temperature=0.7,
-        )
-        return jsonify({"reply": response.choices[0].message.content})
+        response = chat_session.send_message(parts)
+        return jsonify({"reply": response.text})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
